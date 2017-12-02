@@ -56,7 +56,6 @@ rtable = Lib.__remoteTable initRemoteTable
 manager :: Files -> [NodeId] -> Process String
 manager files workers = do
     us <- getSelfPid
-    let n = 10
     workQueue <- spawnLocal $ do
         forM_ files $ \f -> do
             pid <- expect

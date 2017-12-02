@@ -1,27 +1,22 @@
-
-resolver: nightly-2016-12-10
-
-docker:
-  enable: false # warning!
-
-# stack image container
+flags: {}
 image:
   container:
-    name: use-cloudhaskell
     base: fpco/stack-run
-
-
-# A package marked 'extra-dep: true' will only be built if demanded by a
-# non-dependency (i.e. a user package), and its test suites and benchmarks
-# will not be run. This is useful for tweaking upstream packages.
+    name: use-cloudhaskell
+extra-package-dbs: []
 packages:
 - '.'
-# Dependency packages to be pulled from upstream that are not in the resolver
-# (e.g., acme-missiles-0.3)
-extra-deps: []
-
-# Override default flag values for local packages and extra-deps
-flags: {}
-
-# Extra package databases containing global packages
-extra-package-dbs: []
+- argon
+docker:
+  enable: false
+extra-deps:
+- distributed-process-0.6.6
+- distributed-process-simplelocalnet-0.2.3.2
+- distributed-static-0.3.8
+- docopt-0.7.0.5
+- hierarchy-0.3.1.2
+- network-transport-tcp-0.5.1
+- pipes-files-0.1.2
+- posix-paths-0.2.1.1
+- rank1dynamic-0.3.3.0
+resolver: lts-3.22
