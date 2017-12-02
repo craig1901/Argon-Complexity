@@ -5,7 +5,6 @@
 
 module Lib where
 
--- These imports are required for Cloud Haskell
 import Control.Distributed.Process
 import Control.Distributed.Process.Backend.SimpleLocalnet
 import Control.Distributed.Process.Closure
@@ -13,8 +12,10 @@ import Control.Distributed.Process.Node (initRemoteTable)
 import Control.Monad
 import Network.Transport.TCP (createTransport, defaultTCPParameters)
 import PrimeFactors
+import ArgonWork
 import System.Environment (getArgs)
 import System.Exit
+
 
 type Master = ProcessId
 type WorkQueue = ProcessId
