@@ -5,7 +5,7 @@ image:
     name: use-cloudhaskell
 extra-package-dbs: []
 packages:
-- '.'
+- .
 - argon
 docker:
   enable: false

@@ -9,15 +9,18 @@ import Control.Monad
 import Network.Transport.TCP                              (createTransport, defaultTCPParameters)
 import System.Environment                                 (getArgs)
 import System.Exit
+import System.FilePath
+import System.Directory
 
 
-getFiles :: [String]
-getFiles = ["FILE 1 TEXT", "FILE 2 TEXT", "FILE 3 TEXT", "FILE 4 TEXT", "FILE 5 TEXT"]
+getFiles :: FilePath -> IO [FilePath]
+getFiles path = getDirectoryContents path
 
 main :: IO ()
 main = do
     args <- getArgs
-    let files = getFiles
+    curr <- getCurrentDirectory
+    files <- getFiles curr
     case args of
       ["manager", host, port] -> do
         putStrLn "Starting Node as Manager"

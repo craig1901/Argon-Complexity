@@ -1,7 +1,6 @@
 module ArgonWork where
 
 import System.IO
-import System.FilePath
 import System.Process
 
 
