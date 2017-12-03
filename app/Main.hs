@@ -14,7 +14,7 @@ import System.Directory
 
 
 getFiles :: FilePath -> IO [FilePath]
-getFiles path = fmap (\f -> f) . filter (\p -> head p /= '.' && p /= "argon") <$> getDirectoryContents path
+getFiles path = fmap (\f -> path ++ "/" ++ f) . filter (\p -> head p /= '.' && p /= "argon") <$> getDirectoryContents path
 
 main :: IO ()
 main = do
