@@ -14,5 +14,5 @@ sendCommand (cmd, args) = do
     (_, Just hout, _, _) <- createProcess(proc cmd $ words args){ std_out = CreatePipe }
     hGetContents hout
 
-runArgon :: IO String
-runArgon = sendCommand("stack", "exec -- argon --json app/")
+runArgon :: String -> IO String
+runArgon file = sendCommand("stack", "exec -- argon " ++ file)

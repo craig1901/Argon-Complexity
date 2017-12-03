@@ -15,6 +15,8 @@ import PrimeFactors
 import ArgonWork
 import System.Environment (getArgs)
 import System.Exit
+import System.FilePath
+
 
 
 type Master = ProcessId
@@ -23,8 +25,8 @@ type File = String
 type Files = [String]
 
 
-doWork :: String -> String
-doWork s = s ++ "COMPLETED!\n"
+doWork :: String -> IO String
+doWork f = runArgon f
 
 
 worker :: (Master, WorkQueue) -> Process ()
@@ -39,7 +41,8 @@ worker (manager, workQueue) = do
       receiveWait
         [ match $ \n  -> do
             liftIO $ putStrLn $ "[Node " ++ (show us) ++ "] given work: " ++ show n
-            send manager (doWork n)
+            work <- liftIO $ doWork n
+            send manager work
             liftIO $ putStrLn $ "[Node " ++ (show us) ++ "] finished work."
             go us
         , match $ \ () -> do

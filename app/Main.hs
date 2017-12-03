@@ -14,7 +14,7 @@ import System.Directory
 
 
 getFiles :: FilePath -> IO [FilePath]
-getFiles path = getDirectoryContents path
+getFiles path = fmap (\f -> f) . filter (\p -> head p /= '.' && p /= "argon") <$> getDirectoryContents path
 
 main :: IO ()
 main = do
@@ -27,7 +27,7 @@ main = do
         backend <- initializeBackend host port rtable
         startMaster backend $ \workers -> do
           result <- manager files workers
-          liftIO $ print result
+          liftIO $ putStr result
           liftIO $ putStrLn "Terminating all slaves"
           terminateAllSlaves backend
       ["worker", host, port] -> do
