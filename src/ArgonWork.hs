@@ -16,3 +16,11 @@ sendCommand (cmd, args) = do
 
 runArgon :: String -> IO String
 runArgon file = sendCommand("stack", "exec -- argon " ++ file)
+
+gitClone :: String -> IO ()
+gitClone repo = callProcess "git" ["clone", repo]
+
+removeRepo :: String -> IO ()
+removeRepo repo = do
+    callProcess "rm" ["-rf", repo]
+    putStrLn $ repo ++ " removed."

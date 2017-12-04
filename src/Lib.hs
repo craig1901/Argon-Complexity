@@ -18,7 +18,6 @@ import System.Exit
 import System.FilePath
 
 
-
 type Master = ProcessId
 type WorkQueue = ProcessId
 type File = String

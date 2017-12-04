@@ -11,6 +11,9 @@ import System.Environment (getArgs)
 import System.Exit
 import System.FilePath ((</>))
 import System.Directory (doesDirectoryExist, getDirectoryContents, getCurrentDirectory)
+import ArgonWork
+import Data.List.Split
+
 
 getRecursiveContents :: FilePath -> IO [FilePath]
 getRecursiveContents topdir = do
@@ -29,17 +32,22 @@ main :: IO ()
 main = do
     args <- getArgs
     curr <- getCurrentDirectory
-    -- files <- getFiles curr
-    files <- getRecursiveContents curr
     case args of
-      ["manager", host, port] -> do
+      ["manager", host, port, repo] -> do
         putStrLn "Starting Node as Manager"
+        liftIO $ gitClone repo
+        let r = splitOn "/" repo
+        let repoFolderName = last r
+        let workFolder = curr ++ "/" ++ repoFolderName
+        putStrLn workFolder
+        files <- getRecursiveContents workFolder
         backend <- initializeBackend host port rtable
         startMaster backend $ \workers -> do
           result <- manager files workers
           liftIO $ putStr result
           liftIO $ putStrLn "Terminating all slaves"
           terminateAllSlaves backend
+          liftIO $ removeRepo repoFolderName
       ["worker", host, port] -> do
         putStrLn "Starting Node as Worker"
         backend <- initializeBackend host port rtable

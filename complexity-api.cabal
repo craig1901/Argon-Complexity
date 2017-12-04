@@ -38,4 +38,5 @@ executable             complexity-api
                      , filepath
                      , directory
                      , process
+                     , split
   default-language:    Haskell2010
