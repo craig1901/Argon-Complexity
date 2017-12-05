@@ -14,7 +14,7 @@ import System.Directory (doesDirectoryExist, getDirectoryContents, getCurrentDir
 import ArgonWork
 import Data.List.Split
 
-
+-- walk through each folder in FilePath to get absolute FilePaths for every FILE in the Directory
 getRecursiveContents :: FilePath -> IO [FilePath]
 getRecursiveContents topdir = do
     names <- getDirectoryContents topdir
@@ -28,21 +28,6 @@ getRecursiveContents topdir = do
     return (concat paths)
 
 
--- startManager :: [FilePath] -> Backend -> IO ()
--- startManager files backend = do
---     startMaster backend $ \workers -> do
---         result <- manager files workers
---         liftIO $ putStr result
---     return ()
---
--- startManager files backend = do
---     startMaster backend $ \workers -> do
---         result <- manager files workers
---         liftIO $ putStr result
---         liftIO $ putStrLn "Terminating all slaves"
---         terminateAllSlaves backend
---     return ()
-
 startManagerNode :: [String] -> Backend -> FilePath -> IO ()
 startManagerNode  commits backend workFolder = do
     startMaster backend $ \workers -> do
@@ -51,6 +36,7 @@ startManagerNode  commits backend workFolder = do
             files <- liftIO $ getRecursiveContents workFolder
             let hsFiles = filter (\p -> takeExtension p == ".hs") files
             result <- manager hsFiles workers
+            liftIO $ putStrLn $ "Cyclomatic Complexities for Commit ID: " ++ commit ++ "\n"
             liftIO $ putStr result) commits
         terminateAllSlaves backend
 
@@ -66,21 +52,10 @@ main = do
         let r = splitOn "/" repo
         let repoFolderName = last r
         let workFolder = curr ++ "/" ++ repoFolderName
-        putStrLn workFolder
-        -- files <- getRecursiveContents workFolder
         backend <- initializeBackend host port rtable
         commits <- getCommits repoFolderName
         startManagerNode commits backend workFolder
-        -- print commits
-        -- mapM_ (\commit -> do
-        --     liftIO $ putStrLn "handling commit!"
-        --     liftIO $ fetchCommit commit workFolder
-        --     files <- getRecursiveContents workFolder
-        --     let hsFiles = filter (\p -> takeExtension p == ".hs") files
-        --     liftIO $ putStr $ show hsFiles
-        --     startManager hsFiles backend) commits
         liftIO $ removeRepo repoFolderName
-        -- print commits
       ["worker", host, port] -> do
         putStrLn "Starting Node as Worker"
         backend <- initializeBackend host port rtable

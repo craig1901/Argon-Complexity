@@ -30,7 +30,7 @@ gitClone repo = callProcess "git" ["clone", repo]
 removeRepo :: String -> IO ()
 removeRepo repo = do
     callProcess "rm" ["-rf", repo]
-    putStrLn $ repo ++ " removed."
+    putStrLn $ repo ++ " removed now that the work is done."
 
 strip :: [a] -> [a]
 strip [] = []

@@ -59,6 +59,7 @@ manager :: Files -> [NodeId] -> Process String
 manager files workers = do
     us <- getSelfPid
     workQueue <- spawnLocal $ do
+        
         forM_ files $ \f -> do
             pid <- expect
             send pid f
@@ -68,7 +69,7 @@ manager files workers = do
             send pid ()
 
     forM_ workers $ \nid -> spawn nid $ $(mkClosure 'worker) (us, workQueue)
-    liftIO $ putStrLn $ "Workers started."
+    liftIO $ putStrLn $ "[Manager] Workers started.\n"
     getResults $ length files
 
 getResults :: Int -> Process String
