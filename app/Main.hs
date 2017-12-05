@@ -28,20 +28,32 @@ getRecursiveContents topdir = do
     return (concat paths)
 
 
-startManager :: [FilePath] -> Backend -> IO ()
-startManager files backend = do
-    startMaster backend $ \workers -> do
-        result <- manager files workers
-        liftIO $ putStr result
-    return ()
+-- startManager :: [FilePath] -> Backend -> IO ()
+-- startManager files backend = do
+--     startMaster backend $ \workers -> do
+--         result <- manager files workers
+--         liftIO $ putStr result
+--     return ()
+--
+-- startManager files backend = do
+--     startMaster backend $ \workers -> do
+--         result <- manager files workers
+--         liftIO $ putStr result
+--         liftIO $ putStrLn "Terminating all slaves"
+--         terminateAllSlaves backend
+--     return ()
 
-startManager files backend = do
+startManagerNode :: [String] -> Backend -> FilePath -> IO ()
+startManagerNode  commits backend workFolder = do
     startMaster backend $ \workers -> do
-        result <- manager files workers
-        liftIO $ putStr result
-        liftIO $ putStrLn "Terminating all slaves"
+        mapM_ (\commit -> do
+            liftIO $ fetchCommit commit workFolder
+            files <- liftIO $ getRecursiveContents workFolder
+            let hsFiles = filter (\p -> takeExtension p == ".hs") files
+            result <- manager hsFiles workers
+            liftIO $ putStr result) commits
         terminateAllSlaves backend
-    return ()
+
 
 main :: IO ()
 main = do
@@ -58,14 +70,15 @@ main = do
         -- files <- getRecursiveContents workFolder
         backend <- initializeBackend host port rtable
         commits <- getCommits repoFolderName
+        startManagerNode commits backend workFolder
         -- print commits
-        mapM_ (\commit -> do
-            liftIO $ putStrLn "handling commit!"
-            liftIO $ fetchCommit commit workFolder
-            files <- getRecursiveContents workFolder
-            let hsFiles = filter (\p -> takeExtension p == ".hs") files
-            liftIO $ putStr $ show hsFiles
-            startManager hsFiles backend) commits
+        -- mapM_ (\commit -> do
+        --     liftIO $ putStrLn "handling commit!"
+        --     liftIO $ fetchCommit commit workFolder
+        --     files <- getRecursiveContents workFolder
+        --     let hsFiles = filter (\p -> takeExtension p == ".hs") files
+        --     liftIO $ putStr $ show hsFiles
+        --     startManager hsFiles backend) commits
         liftIO $ removeRepo repoFolderName
         -- print commits
       ["worker", host, port] -> do
