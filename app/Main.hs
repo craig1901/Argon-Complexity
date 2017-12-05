@@ -9,7 +9,7 @@ import Control.Monad
 import Network.Transport.TCP (createTransport, defaultTCPParameters)
 import System.Environment (getArgs)
 import System.Exit
-import System.FilePath ((</>))
+import System.FilePath ((</>), takeExtension)
 import System.Directory (doesDirectoryExist, getDirectoryContents, getCurrentDirectory)
 import ArgonWork
 import Data.List.Split
@@ -28,14 +28,14 @@ getRecursiveContents topdir = do
     return (concat paths)
 
 
-startManager :: [FilePath] -> Backend -> Int -> IO ()
-startManager files backend n = do
+startManager :: [FilePath] -> Backend -> IO ()
+startManager files backend = do
     startMaster backend $ \workers -> do
         result <- manager files workers
         liftIO $ putStr result
     return ()
 
-startManager files backend 0 = do
+startManager files backend = do
     startMaster backend $ \workers -> do
         result <- manager files workers
         liftIO $ putStr result
@@ -55,16 +55,17 @@ main = do
         let repoFolderName = last r
         let workFolder = curr ++ "/" ++ repoFolderName
         putStrLn workFolder
-        files <- getRecursiveContents workFolder
+        -- files <- getRecursiveContents workFolder
         backend <- initializeBackend host port rtable
         commits <- getCommits repoFolderName
-        print commits
+        -- print commits
         mapM_ (\commit -> do
             liftIO $ putStrLn "handling commit!"
             liftIO $ fetchCommit commit workFolder
             files <- getRecursiveContents workFolder
-            let n = length commits
-            startManager files backend (n-1)) commits
+            let hsFiles = filter (\p -> takeExtension p == ".hs") files
+            liftIO $ putStr $ show hsFiles
+            startManager hsFiles backend) commits
         liftIO $ removeRepo repoFolderName
         -- print commits
       ["worker", host, port] -> do
