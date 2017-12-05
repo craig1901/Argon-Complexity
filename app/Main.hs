@@ -28,6 +28,21 @@ getRecursiveContents topdir = do
     return (concat paths)
 
 
+startManager :: [FilePath] -> Backend -> Int -> IO ()
+startManager files backend n = do
+    startMaster backend $ \workers -> do
+        result <- manager files workers
+        liftIO $ putStr result
+    return ()
+
+startManager files backend 0 = do
+    startMaster backend $ \workers -> do
+        result <- manager files workers
+        liftIO $ putStr result
+        liftIO $ putStrLn "Terminating all slaves"
+        terminateAllSlaves backend
+    return ()
+
 main :: IO ()
 main = do
     args <- getArgs
@@ -42,12 +57,16 @@ main = do
         putStrLn workFolder
         files <- getRecursiveContents workFolder
         backend <- initializeBackend host port rtable
-        startMaster backend $ \workers -> do
-          result <- manager files workers
-          liftIO $ putStr result
-          liftIO $ putStrLn "Terminating all slaves"
-          terminateAllSlaves backend
-          liftIO $ removeRepo repoFolderName
+        commits <- getCommits repoFolderName
+        print commits
+        mapM_ (\commit -> do
+            liftIO $ putStrLn "handling commit!"
+            liftIO $ fetchCommit commit workFolder
+            files <- getRecursiveContents workFolder
+            let n = length commits
+            startManager files backend (n-1)) commits
+        liftIO $ removeRepo repoFolderName
+        -- print commits
       ["worker", host, port] -> do
         putStrLn "Starting Node as Worker"
         backend <- initializeBackend host port rtable

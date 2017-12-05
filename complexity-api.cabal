@@ -24,6 +24,8 @@ library
                      , distributed-process-simplelocalnet
                      , process
                      , filepath
+                     , split
+                     , directory
   default-language:    Haskell2010
 
 executable             complexity-api
