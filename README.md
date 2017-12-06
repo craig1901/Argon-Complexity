@@ -16,8 +16,8 @@ Once these are obtained I send these file paths to the workers to get the comple
 
 1. Clone this repo `git clone https://craig1901/complexity_api`
 2. `stack build` inside the directory
-3. `bash workers.sh` to create the workers (you can open this file to add more or use less
-4. `bash run.sh <repo to compute clyclomatic complexity`
+3. `bash workers.sh` to create the workers (you can open this file to add more or use less)
+4. `bash run.sh <repo to compute clyclomatic complexity>`
 5. View your results!
 
 ## Results
