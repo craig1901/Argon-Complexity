@@ -41,4 +41,5 @@ executable             complexity-api
                      , directory
                      , process
                      , split
+                     , time
   default-language:    Haskell2010

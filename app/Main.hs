@@ -13,6 +13,7 @@ import System.FilePath ((</>), takeExtension)
 import System.Directory (doesDirectoryExist, getDirectoryContents, getCurrentDirectory)
 import ArgonWork
 import Data.List.Split
+import Data.Time.Clock
 
 -- walk through each folder in FilePath to get absolute FilePaths for every FILE in the Directory
 getRecursiveContents :: FilePath -> IO [FilePath]
@@ -54,8 +55,12 @@ main = do
         let workFolder = curr ++ "/" ++ repoFolderName
         backend <- initializeBackend host port rtable
         commits <- getCommits repoFolderName
+        start <- getCurrentTime
         startManagerNode commits backend workFolder
+        end <- getCurrentTime
         liftIO $ removeRepo repoFolderName
+        let executionTime = diffUTCTime end start
+        putStrLn $ "The execution time for this repo and all its commits was: " ++ (show executionTime) ++ "\n"
       ["worker", host, port] -> do
         putStrLn "Starting Node as Worker"
         backend <- initializeBackend host port rtable
