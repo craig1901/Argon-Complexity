@@ -34,7 +34,7 @@ Results based on this [Repository](https://github.com/craig1901/chatServer/):
 ### Table
 
 | # of Workers | Time (s) |
-| ------------- |————————	|
+| ------------- | --------- |
 | 1 | 85.32 |
 | 2 | 55.42 |
 | 3 | 53.62 |
