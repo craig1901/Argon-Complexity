@@ -22,7 +22,7 @@ Once these are obtained I send these file paths to the workers to get the comple
 
 ## Results
 
-For results on this project, I collected the time it took to complete the computation of the cyclomatic complexities for all commits for a given repo
+For results on this project, I collected the time it took to complete the computation of the cyclomatic complexities for all commits for a given repo. As can be seen from the graph below, the use of workers to complete this task is very useful where we have a drastic drop in completion time when we increase from 1 worker to 2. This project was done on local development so all workers were all executed on the same machine, which is not the intended use of a distributed project such as this so if all workers were on different machines, the completion time would decrease even more as the worker count increased.
 
 Results based on this [Repository](https://github.com/craig1901/chatServer/):
 
